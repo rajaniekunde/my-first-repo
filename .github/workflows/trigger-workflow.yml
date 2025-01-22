@@ -9,7 +9,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "0 9 * * *"  # Run daily at 9:00 AM UTC
+    - cron: "* * * * *"  # Run every minute
 
 jobs:
   explore-triggers:
