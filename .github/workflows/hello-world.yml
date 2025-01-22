@@ -1,0 +1,24 @@
+name: Hello World Workflow
+
+# Trigger workflow on push or pull request to the main branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Define the jobs to run
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Check out the repository (needed for GitHub Actions)
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      # Run a simple echo command
+      - name: Say Hello World
+        run: echo "Hello World!"
