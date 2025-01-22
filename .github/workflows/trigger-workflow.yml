@@ -1,0 +1,20 @@
+name: Trigger Exploration Workflow
+# Define triggers for push, pull_request, and schedule
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 9 * * *"  # Run daily at 9:00 AM UTC
+jobs:
+  explore-triggers:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Trigger Info
+        run: |
+          echo "Trigger: ${{ github.event_name }}"
+          echo "Workflow successfully triggered by ${{ github.actor }}"
