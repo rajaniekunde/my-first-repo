@@ -1,4 +1,5 @@
 name: Trigger Exploration Workflow
+
 # Define triggers for push, pull_request, and schedule
 on:
   push:
@@ -9,6 +10,7 @@ on:
       - main
   schedule:
     - cron: "0 9 * * *"  # Run daily at 9:00 AM UTC
+
 jobs:
   explore-triggers:
     runs-on: ubuntu-latest
