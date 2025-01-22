@@ -1,0 +1,17 @@
+name: Basic YAML Workflow
+# Specify when the workflow should be triggered
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+# Define the jobs and steps
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      # Print "Workflow Setup Complete" using a shell command
+      - name: Print Setup Message
+        run: echo "Workflow Setup Complete"
