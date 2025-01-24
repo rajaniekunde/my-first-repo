@@ -69,5 +69,5 @@ jobs:
           - Workflow: ${{ github.workflow }}
           - Run ID: ${{ github.run_id }}
           - URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        to: rajani.ekunde@globallogic.com
-        from: "GitHub Actions <github-actions@example.com>"
+        to: rajaniekunde103@gmail.com
+        from: rajaniekunde103@gmail.com
