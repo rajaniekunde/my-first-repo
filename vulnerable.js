@@ -1,22 +1,34 @@
-// vulnerable.js
+name: "CodeQL"
 
-// Example of a security vulnerability (SQL Injection)
-const express = require('express');
-const app = express();
-const sqlite3 = require('sqlite3').verbose();
+on:
+  push:
+    branches: [main]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [main]
+  schedule:
+    - cron: '0 0 * * 0' # Runs every Sunday at midnight
 
-const db = new sqlite3.Database(':memory:');
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
 
-app.get('/user', (req, res) => {
-    const userId = req.query.id; // User input directly in SQL query
-    const query = `SELECT * FROM users WHERE id = '${userId}'`; // Vulnerable to SQL Injection
-    db.all(query, (err, rows) => {
-        if (err) {
-            res.status(500).send(err.message);
-        } else {
-            res.json(rows);
-        }
-    });
-});
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript', 'python' ]
+        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
+        # Adjust the languages in this list as per your project
 
-app.listen(3000, () => console.log('App listening on port 3000'));
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
