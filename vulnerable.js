@@ -1,34 +1,42 @@
-name: "CodeQL"
+// vulnerable.js
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [main]
-  schedule:
-    - cron: '0 0 * * 0' # Runs every Sunday at midnight
+// Example of security vulnerabilities (SQL Injection, XSS, Insecure Deserialization)
+const express = require('express');
+const app = express();
+const sqlite3 = require('sqlite3').verbose();
+const bodyParser = require('body-parser');
 
-jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
+const db = new sqlite3.Database(':memory:');
+app.use(bodyParser.json()); // For parsing JSON input
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'javascript', 'python' ]
-        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
-        # Adjust the languages in this list as per your project
+// SQL Injection Vulnerability
+app.get('/user', (req, res) => {
+    const userId = req.query.id; // User input directly in SQL query
+    const query = `SELECT * FROM users WHERE id = '${userId}'`; // Vulnerable to SQL Injection
+    db.all(query, (err, rows) => {
+        if (err) {
+            res.status(500).send(err.message);
+        } else {
+            res.json(rows);
+        }
+    });
+});
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+// XSS (Cross-Site Scripting) Vulnerability
+app.get('/search', (req, res) => {
+    const searchTerm = req.query.q; // User input displayed without sanitization
+    res.send(`<h1>Search Results for: ${searchTerm}</h1>`); // Vulnerable to XSS
+});
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: ${{ matrix.language }}
+// Insecure Deserialization Vulnerability
+app.post('/parse', (req, res) => {
+    const data = req.body.data; // User-controlled serialized input
+    try {
+        const parsedData = JSON.parse(data); // Vulnerable to insecure deserialization
+        res.json(parsedData);
+    } catch (error) {
+        res.status(400).send('Invalid JSON');
+    }
+});
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+app.listen(3000, () => console.log('App listening on port 3000'));
